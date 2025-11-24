@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load and Copy Multiple Codes</title>
+    <style>
+        /* Simple styling for better visibility */
+        button {
+            padding: 10px 15px;
+            margin-right: 15px;
+            cursor: pointer;
+        }
+        .status-message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="copyBtn1" data-file="twoway.txt">Two Way</button>
+
+    <button id="copyBtn2" data-file="route.txt">Route</button>
+
+    <button id="copyBtn3" data-file="mongo.txt">Mongo</button>
+
+    <div class="status-message" id="status-display"></div>
+
+</body>
+<script>
+    // 1. Reusable function to load file and copy content
+    async function loadAndCopy(filePath, buttonId) {
+        const statusDisplay = document.getElementById('status-display');
+        statusDisplay.textContent = `Loading code from ${filePath}...`;
+
+        try {
+            // Fetch the file content
+            const response = await fetch(filePath);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}. Check if the file exists and the server is running.`);
+            }
+
+            const fileContent = await response.text();
+
+            // Write content to clipboard
+            await navigator.clipboard.writeText(fileContent);
+
+            statusDisplay.textContent = `✅ Success! Content from ${filePath} copied to clipboard.`;
+            // Optional: Briefly highlight the button that was clicked
+            document.getElementById(buttonId).style.backgroundColor = '#d4edda';
+            setTimeout(() => {
+                document.getElementById(buttonId).style.backgroundColor = '';
+            }, 1000);
+
+
+        } catch (err) {
+            console.error("Operation failed: ", err);
+            statusDisplay.textContent = `❌ Failed to copy code from ${filePath}. Error: ${err.message}.`;
+        }
+    }
+
+
+    // 2. Attach listeners to all buttons
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = [
+            { id: 'copyBtn1', file: 'twoway.txt' },
+            { id: 'copyBtn2', file: 'route.txt' },
+            { id: 'copyBtn3', file: 'Mongo.txt' }
+        ];
+
+        buttons.forEach(btn => {
+            const buttonElement = document.getElementById(btn.id);
+            // Use the data-file attribute as a fallback, but the 'btn.file' is cleaner
+            const filePath = buttonElement.getAttribute('data-file') || btn.file;
+            
+            buttonElement.addEventListener('click', () => {
+                loadAndCopy(filePath, btn.id);
+            });
+        });
+    });
+
+</script>
+
+</html>

@@ -1,0 +1,42 @@
+
+import mongoose from "mongoose";
+
+mongoose.connect("mongodb://localhost:27017/testdb")
+    .then(() => console.log("MongoDB Connected"))
+
+const StudentSchema = new mongoose.Schema({
+    name: String,
+    age: Number,
+    course: String
+})
+
+const Student = mongoose.model("Student", StudentSchema);
+
+
+//Create 
+const user = new Student({
+    name: "Pool1",
+    age: 24,
+    course: "MCA"
+});
+await user.save();
+
+//Read
+const data = await Student.find()
+console.log(data)
+
+//Update
+await Student.updateOne(
+    { name: "John Doe" },
+    { $set: { age: 30 } }
+);
+
+//Delete
+await Student.deleteOne(
+    { name: "Pool"}
+);
+
+
+//Sort by ascending Order
+const data1 = await Student.find().sort({ name: 1 });
+console.log(data1);
