@@ -20,7 +20,7 @@
 
                 })
                 .when("/about", {
-                    template: "<h2>About Page</h2><p>This is the about page.</p>",
+                    templateUrl: "About.html",
 
                 })
                 .otherwise({ redirectTo: "/" });
